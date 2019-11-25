@@ -103,9 +103,9 @@ COMPONENT Guide_metal = Guide_gravity(
 
 COMPONENT Guide_curved = Guide_gravity(
     w1 = guide_start_width, h1 = 0.15, l = 0.5, mright=m_out, mleft=m, mtop=m_top, mbottom=m_top, R0=R0, alpha=alpha, nslit=n)
-  AT (0, -0.025, 3) RELATIVE PREVIOUS
+  AT (0, -0.05, 3) RELATIVE PREVIOUS
   ROTATED (0, rot1, 0) RELATIVE PREVIOUS
-
+/*
 COMPONENT COPY(Guide_curved) = COPY(Guide_curved)()
   AT (0, 0, 0.5) RELATIVE PREVIOUS
   ROTATED (0,rot1,0) RELATIVE PREVIOUS
@@ -237,12 +237,12 @@ COMPONENT COPY(Guide_curved) = COPY(Guide_curved)()
 COMPONENT COPY(Guide_curved) = COPY(Guide_curved)()
   AT (0, 0, 0.5) RELATIVE PREVIOUS
   ROTATED (0,rot1,0) RELATIVE PREVIOUS
-
+*/
 COMPONENT Guide_curved2 = Guide_gravity(
     w1 = guide_start_width, h1 = 0.05, l = 0.5, mright=m_out, mleft=m, mtop=m_top, mbottom=m_top, R0=R0, alpha=alpha, nslit=n)
-  AT (0, -0.05, 0.5) RELATIVE PREVIOUS
+  AT (0, -0.1, 0.5) RELATIVE PREVIOUS
   ROTATED (0, rot2, 0) RELATIVE PREVIOUS
-
+/*
 COMPONENT COPY(Guide_curved2) = COPY(Guide_curved2)()
   AT (0, 0, 0.5) RELATIVE PREVIOUS
   ROTATED (0,rot2,0) RELATIVE PREVIOUS
@@ -722,7 +722,7 @@ COMPONENT COPY(Guide_curved2) = COPY(Guide_curved2)()
 COMPONENT Guide_straight = Guide_gravity(
     w1 = 0.05, h1 = 0.05, l = 12, mright=m, mleft=m, mtop=m_top, mbottom=m_top, R0=R0, alpha=alpha)
   AT (0, 0, 0.5) RELATIVE PREVIOUS
-
+*/
 COMPONENT Monlam = Monitor_nD(
     xwidth = 0.05, yheight = 0.05, options = "lambda bins = 100 limits = [0 20]", filename = "H3-5D_NSE.lam")
   AT (0, 0, 12.0001) RELATIVE PREVIOUS
