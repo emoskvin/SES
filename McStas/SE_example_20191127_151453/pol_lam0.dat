@@ -1,0 +1,53 @@
+# Format: McCode with text headers
+# URL: http://www.mccode.org
+# Creator: McStas 2.5 - Dec. 12, 2018
+# Instrument: SE_example.instr
+# Ncount: 1000000
+# Trace: no
+# Gravitation: no
+# Seed: 1574840070
+# Directory: /Users/EvG/Documents/OENS/TZ_PIK/GitHubSES/SES/McStas/SE_example_20191127_151453
+# Param: POL_ANGLE=2
+# Param: SAMPLE=0
+# Param: Bguide=0.1
+# Param: Bflip=0.0003
+# Param: dBz=0
+# Param: Lam=8
+# Param: dLam=0.8
+# Date: Wed Nov 27 15:14:54 2019 (1574835294)
+# type: array_1d(20)
+# Source: SE_example (SE_example.instr)
+# component: pl_mon0
+# position: 0 0 1.32
+# title: Pol-wavelength monitor
+# Ncount: 1000000
+# filename: pol_lam0.dat
+# statistics: X0=7.97271; dX=0.635926;
+# signal: Min=0; Max=0.979601; Mean=0.244128;
+# values: 4.88257 0.00138847 63216
+# xvar: Wavelength
+# yvar: (I,I_err)
+# xlabel: Wavelength [AA]
+# ylabel: Mean Polarisation
+# xlimits: 1 10
+# variables: Wavelength I I_err N
+1.225 0 0 0 
+1.675 0 0 0 
+2.125 0 0 0 
+2.575 0 0 0 
+3.025 0 0 0 
+3.475 0 0 0 
+3.925 0 0 0 
+4.375 0 0 0 
+4.825 0 0 0 
+5.275 0 0 0 
+5.725 0 0 0 
+6.175 0 0 0 
+6.625 0 0 0 
+7.075 0.9796009097 0.000251018813 3903 
+7.525 0.979600308 5.497566785e-05 17819 
+7.975 0.9789121689 0.0001787400228 17911 
+8.425 0.9749945794 0.0004926228963 17751 
+8.875 0.9694601673 0.001275078956 5832 
+9.325 0 0 0 
+9.775 0 0 0 
