@@ -1,0 +1,106 @@
+McStas simulation description file for H3_5D.
+Date:    Tue Dec  3 16:09:10 2019
+Program: McStas 2.5 - Dec. 12, 2018
+
+begin instrument: H3_5D
+  File: /Users/EvG/Documents/OENS/TZ_PIK/GitHubSES/SES/H5-2-1-SEM_20191203_160910/mccode
+  Source: H5-2-1-SEM.instr
+  Parameters: 
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
+end instrument
+
+begin simulation: /Users/EvG/Documents/OENS/TZ_PIK/GitHubSES/SES/H5-2-1-SEM_20191203_160910
+  Format: McCode with text headers
+  URL: http://www.mccode.org
+  Creator: McStas 2.5 - Dec. 12, 2018
+  Instrument: H5-2-1-SEM.instr
+  Ncount: 100000000
+  Trace: no
+  Gravitation: no
+  Seed: 1575379506
+  Directory: /Users/EvG/Documents/OENS/TZ_PIK/GitHubSES/SES/H5-2-1-SEM_20191203_160910
+end simulation
+
+begin data
+  Date: Tue Dec  3 16:11:39 2019 (1575378699)
+  type: array_2d(11, 1000000)
+  Source: H3_5D (H5-2-1-SEM.instr)
+  component: virtual_output
+  position: 4.77981 -0.075 93.6415
+  title:  Intensity Position Position Position Velocity Velocity Velocity Time_Of_Flight Spin Spin Spin Monitor (Square)
+  ratio: 7.67944e+06/1e+08
+  filename: SourceFile.dat
+  statistics: X0=0; dX=0; Y0=0; dY=0;
+  signal: Min=0; Max=0; Mean=0;
+  values: 0 0 0
+  xvar: Li
+  yvar: p 
+  xlabel: List of neutron events
+  ylabel: p x y z vx vy vz t sx sy sz 
+  zvar: I
+  zlabel: Signal per bin
+  xylimits: 1 1e+06 1 11
+  variables: p x y z vx vy vz t sx sy sz 
+end data
+
+begin data
+  Date: Tue Dec  3 16:38:16 2019 (1575380296)
+  type: array_1d(100)
+  Source: H3_5D (H5-2-1-SEM.instr)
+  component: Monlam
+  position: 4.77981 -0.075 93.6415
+  title: Wavelength [Angs] monitor
+  Ncount: 100000000
+  filename: H3-5D_NSE.lam
+  statistics: X0=7.51612; dX=3.52464;
+  signal: Min=0; Max=2.56328e+09; Mean=8.01202e+08;
+  values: 8.01202e+10 1.07371e+08 1.30068e+07
+  xvar: L
+  yvar: (I,I_err)
+  xlabel: Wavelength [Angs]
+  ylabel: Intensity [n/s/bin]
+  xlimits: 0 20
+  variables: L I I_err N
+end data
+
+begin data
+  Date: Tue Dec  3 16:38:16 2019 (1575380296)
+  type: array_1d(100)
+  Source: H3_5D (H5-2-1-SEM.instr)
+  component: Mondx
+  position: 4.77981 -0.075 93.6415
+  title: Hor. Divergence [deg] monitor
+  Ncount: 100000000
+  filename: H3-5D_NSE.dx
+  statistics: X0=-0.000359369; dX=0.443934;
+  signal: Min=0; Max=4.56384e+09; Mean=8.01232e+08;
+  values: 8.01232e+10 1.07373e+08 1.30079e+07
+  xvar: hd
+  yvar: (I,I_err)
+  xlabel: Hor. Divergence [deg]
+  ylabel: Intensity [n/s/bin]
+  xlimits: -3 3
+  variables: hd I I_err N
+end data
+
+begin data
+  Date: Tue Dec  3 16:38:16 2019 (1575380296)
+  type: array_1d(100)
+  Source: H3_5D (H5-2-1-SEM.instr)
+  component: Mondy
+  position: 4.77981 -0.075 93.6415
+  title: Vert. Divergence [deg] monitor
+  Ncount: 100000000
+  filename: H3-5D_NSE.dy
+  statistics: X0=-0.000206916; dX=0.442733;
+  signal: Min=6.30084e-245; Max=4.34838e+09; Mean=8.01232e+08;
+  values: 8.01232e+10 1.07373e+08 1.18982e+07
+  xvar: vd
+  yvar: (I,I_err)
+  xlabel: Vert. Divergence [deg]
+  ylabel: Intensity [n/s/bin]
+  xlimits: -3 3
+  variables: vd I I_err N
+end data

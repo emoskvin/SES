@@ -726,6 +726,11 @@ COMPONENT Guide_straight = Guide_gravity(
 COMPONENT Monlam = Monitor_nD(
     xwidth = 0.05, yheight = 0.05, options = "lambda bins = 100 limits = [0 20]", filename = "H3-5D_NSE.lam")
   AT (0, 0, 12.0001) RELATIVE PREVIOUS
+/*
+COMPONENT Monlomega = Monitor_nD(
+    xwidth = 0.05, yheight = 0.05, options = "omega auto", filename = "H3-5D_NSE_e.lam")
+  AT (0, 0, 12.0001) RELATIVE PREVIOUS
+*/
 
 COMPONENT Mondx = Monitor_nD(
     xwidth = 0.06, yheight = 0.06, options = "dx bins = 100 limits = [-3 3]", filename = "H3-5D_NSE.dx")
