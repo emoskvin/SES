@@ -1,3 +1,6 @@
 # SES
-Spin-Echo Spectrometer project for PIK reactor
-these are the first speps on GitHub
+Spin-Echo Spectrometer project for the PIK reactor
+
+Things to do:
+1 - посмотреть степень монохроматизации на других СЭС, есть ли больше 10%
+2 - 

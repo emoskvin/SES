@@ -1,0 +1,376 @@
+ /*******************************************************************************
+*         McStas instrument definition URL=http://www.mcstas.org
+*
+* Instrument: Spin-Echo Spectrometer at PIK neutron guide hall
+*
+* %Identification
+* Written by: Evgeny Moskvin
+* Date: November 2019
+* Origin: PNPI
+* %INSTRUMENT_SITE: -
+*
+* Mockup of transmission Spin-Echo, written for PNCMI 2010 school in Delft. This version uses Pol_FieldBox for description of the fields.
+*
+* %Description
+* This instrument shows the use of essential McStas polarisation components, including Pol_mirror, Pol_FieldBox and MeanPolLambda_monitor.
+*
+* Pol_mirror is used to polarize and analyze the incoming and scattered beams.
+* Pol_FieldBox is used to define guidefields and flippers.
+* MeanPolLambda_montior is used to monitor beam polarisation.
+*
+* Example: mcrun SE_example2.instr dBz=-0.0001,0.0001 -N41 -n1e5 
+*
+* %Parameters
+* POL_ANGLE: [deg]  Reflection angle of polarizer/analyzer
+* SAMPLE: [1]       Flag to include (0) or exclude incoherent scatterer
+* Bguide: [T]       Field magnitude in guide fields
+* dBz: [T]          Magnitude field perturbation in first guide field
+* Bflip: [T]        Magnitude of flipper fields,
+* Lam: [Angstrom]   Mean wavelength of neutrons emitted from source
+* dLam: [Angstrom]  Wavelength spread of neutrons emitted from source
+*
+* %Link
+* Requires mcstas 1.12b (or beta). PolLambda_monitor has been modified to work (nL->nlam)
+* %End
+*******************************************************************************/
+DEFINE INSTRUMENT SE_example2(POL_ANGLE=2, SAMPLE=0, Bguide=0.1, Bflip=3e-4, dBz=0, Lam=8, dLam=0.8)
+
+/* The DECLARE section allows us to declare variables or  small      */
+/* functions in C syntax. These may be used in the whole instrument. */
+DECLARE
+%{
+  double pol_radius;
+%}
+
+/* The INITIALIZE section is executed when the simulation starts     */
+/* (C code). You may use them as component parameter values.         */
+INITIALIZE
+%{
+  pol_radius=0.3/(POL_ANGLE*DEG2RAD);
+%}
+
+/* Here comes the TRACE section, where the actual      */
+/* instrument is defined as a sequence of components.  */
+TRACE
+
+/* The Arm() class component defines reference points and orientations  */
+/* in 3D space. Every component instance must have a unique name. Here, */
+/* Origin is used. This Arm() component is set to define the origin of  */
+/* our global coordinate system (AT (0,0,0) ABSOLUTE). It may be used   */
+/* for further RELATIVE reference, Other useful keywords are : ROTATED  */
+/* EXTEND GROUP PREVIOUS. Also think about adding a neutron source !    */
+/* Progress_bar is an Arm displaying simulation progress.               */
+COMPONENT Origin = Progress_bar()
+AT (0,0,0) ABSOLUTE
+/*
+COMPONENT Source = Source_simple(
+    radius = .012, dist = 1, xwidth = 0.05, yheight=0.05, lambda0 = Lam,
+    dlambda = dLam, flux=1e7)
+AT (0, 0, 0) RELATIVE Origin
+*/
+
+COMPONENT Source = Virtual_input(
+    filename="SourceFile.dat")
+AT (0, 0, 0) RELATIVE Origin
+
+//the follwing 3 monitors to check SourceFile.dat generated from neutron guide simulation H5-2-1-SEM.instr - gives exactly the same result as the original, so monitors comented out.
+/*
+COMPONENT Monlam = Monitor_nD(
+    xwidth = 0.05, yheight = 0.05, options = "lambda bins = 100 limits = [0 20]", filename = "H3-5D_NSE.lam")
+  AT (0, 0, 0) RELATIVE PREVIOUS
+
+COMPONENT Mondx = Monitor_nD(
+    xwidth = 0.06, yheight = 0.06, options = "dx bins = 100 limits = [-3 3]", filename = "H3-5D_NSE.dx")
+  AT (0, 0, 0) RELATIVE PREVIOUS
+
+COMPONENT Mondy = Monitor_nD(
+    xwidth = 0.06, yheight = 0.06, options = "dy bins = 100 limits = [-5 5]", filename = "H3-5D_NSE.dy")
+  AT (0, 0, 0) RELATIVE PREVIOUS
+*/
+
+// standart 3 monitors: lambda, XY, dXdY
+/*
+COMPONENT MonLSource = Monitor_nD(
+    xwidth=0.05, 
+    yheight=0.05, 
+    restore_neutron=1, 
+    options="lambda, limits=0,20, bins=100", 
+    filename="SourceL")
+AT (0, 0, 0) RELATIVE Source
+
+COMPONENT MonXYSource = Monitor_nD(
+    xwidth=0.06, 
+    yheight=0.06, 
+    restore_neutron=1,
+    min=-0.03,
+    max=0.03,
+    bins=150,
+    options="x, y", 
+    filename="SourceXY")
+AT (0, 0, 0) RELATIVE PREVIOUS
+
+COMPONENT MondXdYSource = Monitor_nD(
+    xwidth=0.06, 
+    yheight=0.06, 
+    restore_neutron=1,
+    min=-3,
+    max=3,
+    bins=150,
+    options="dx, dy", 
+    filename="SourcedXdY")
+AT (0, 0, 0) RELATIVE PREVIOUS
+*/
+//********** Velosity Selector **********
+
+COMPONENT Selector = Selector(
+    xmin=-0.025, 
+    xmax=0.025, 
+    ymin=-0.025, 
+    ymax=0.025, 
+   length=0.25, 
+    nslit=72, 
+    d=0.0004, 
+    radius=0.115, 
+    alpha=30.6, 
+ //   nu=530)
+    nu=3956*30.6*DEG2RAD/2/3.1415926/Lam/0.25)
+AT (0, 0, 0.1) RELATIVE Source
+
+COMPONENT MonLSelector = Monitor_nD(
+    xwidth=0.05, 
+    yheight=0.05, 
+    restore_neutron=1, 
+    min=(1-2*0.15)*Lam,
+    max=(1+2*0.15)*Lam,
+    options="lambda, limits=0,20, bins=100", 
+    filename="SelectorL")
+AT (0, 0, 0.25) RELATIVE Selector
+/*
+COMPONENT MonXYSelector = Monitor_nD(
+    xwidth=0.06, 
+    yheight=0.06, 
+    restore_neutron=1,
+    min=-0.03,
+    max=0.03,
+    bins=150,
+    options="x, y", 
+    filename="SelectorXY")
+AT (0, 0, 0) RELATIVE PREVIOUS
+
+COMPONENT MondXdYSelector = Monitor_nD(
+    xwidth=0.06, 
+    yheight=0.06, 
+    restore_neutron=1,
+    min=-3,
+    max=3,
+    bins=150,
+    options="dx, dy", 
+    filename="SelectordXdY")
+AT (0, 0, 0) RELATIVE PREVIOUS
+*/
+
+COMPONENT pol_guide_vmirror = Pol_guide_vmirror(
+    xwidth=0.05, 
+    yheight=0.05, 
+    length=2, 
+    rPar    ==1, 
+    1.0=1, 
+    0.0219=0.0219, 
+    4.07=4.07, 
+    3.2=3.2, 
+    0.003=0.003, 
+    rUpPar  ==1, 
+    1.0=1, 
+    0.0219=0.0219, 
+    4.07=4.07, 
+    3.2=3.2, 
+    0.003=0.003, 
+    debug=1)
+AT (0, 0, 0) RELATIVE PREVIOUS
+
+/*
+COMPONENT polariser_pt = Arm()
+AT (0, 0, 1) RELATIVE Source
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT hdiv_mon = Hdiv_monitor(
+     nh = 21, filename = "hdiv_mon", restore_neutron = 1,
+     xwidth = 0.05, yheight = 0.05, h_maxdiv = 1.0)
+AT (0, 0, 0) RELATIVE polariser_pt
+ROTATED (0, 0, 90) RELATIVE polariser_pt
+
+COMPONENT polariser2 = Pol_mirror(
+  rDownPar = {0.99,0.11,0.9,2,0.0185},
+  rUpPar = {0.99,0.0485,0.9,1,0.0002}, zwidth = 0.1, yheight = 0.3,
+  p_reflect = 0)
+AT (0, 0, 0) RELATIVE polariser_pt
+ROTATED (90-POL_ANGLE,90,0) RELATIVE polariser_pt
+EXTEND %{
+  if(!SCATTERED) ABSORB;
+%}
+
+
+COMPONENT psd_ap = PSD_monitor(
+  filename = "psd_ap", xwidth = 0.1, yheight = 0.01,restore_neutron=1)
+AT (0, 0, 0.32) RELATIVE polariser_pt
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT pl_mon0 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.01, filename = "pol_lam0",
+  restore_neutron = 1, mx = 0, my = 0, mz = 1, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0.32) RELATIVE polariser_pt
+ROTATED (0, 0, 0) RELATIVE Source
+*/
+/*beam is now polarized in the flight direction - flip it to the vertical*/
+/*
+COMPONENT flipper1 = Pol_FieldBox(
+  xwidth=0.1,yheight=0.1,zdepth=0.02,
+  Bx=0, By=Bflip, Bz=Bflip)
+AT( 0,0,0.32) RELATIVE polariser_pt
+ROTATED (0,0,0) RELATIVE Source
+
+COMPONENT pl_mon1 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.01, filename = "pol_lam1",
+  restore_neutron = 1, mx = 0, my = 1, mz = 0, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0.021) RELATIVE flipper1 
+ROTATED (0, 0, 0) RELATIVE Source
+*/
+/*the precession region*/
+/*
+COMPONENT guide_field_1 = Pol_FieldBox(
+    xwidth=0.1, yheight=0.1, zdepth=1, Bx=0, By=0, Bz=Bguide+dBz)
+AT(0, 0, 0.021) RELATIVE flipper1
+
+COMPONENT guide_field_1_end=Slit(xwidth=0.1, yheight=0.01)
+AT(0,0,1.001) RELATIVE guide_field_1
+ROTATED (0,0,0) RELATIVE Source
+
+COMPONENT pl_mon2 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.1, filename = "pol_lam2",
+  restore_neutron = 1, mx = 0, my = 1, mz = 0, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 1.001) RELATIVE guide_field_1
+ROTATED (0, 0, 0) RELATIVE Source
+*/
+/*two flippers after one another*/
+/*
+COMPONENT flipper2_1 = Pol_FieldBox(
+  xwidth=0.1,yheight=0.1,zdepth=0.02,
+  Bx=0, By=Bflip, Bz=Bflip)
+AT( 0,0,1.001+2e-3) RELATIVE guide_field_1
+
+COMPONENT flipper2_2 = Pol_FieldBox(
+  xwidth=0.1,yheight=0.1,zdepth=0.02,
+  Bx=0, By=-Bflip, Bz=Bflip)
+AT( 0,0,0.021) RELATIVE flipper2_1
+
+COMPONENT flipper_2_2_end=Slit(xwidth=0.1, yheight=0.01)
+AT(0,0,0.0201) RELATIVE flipper2_2
+*/
+/*Here is the sample position*/
+/*
+COMPONENT sample_mnt= Arm()
+  AT (0,0,0.02+0.021) RELATIVE flipper2_2
+
+COMPONENT pl_mon3 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.1, filename = "pol_lam3",
+  restore_neutron = 1, mx = 0, my = 1, mz = 0, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0) RELATIVE sample_mnt
+
+COMPONENT sample0 = V_sample(
+	radius=0.0099,h=0.05, focus_xw=0.1, focus_yh=0.01,target_index=4)
+WHEN (SAMPLE==0) AT(0,0,0) RELATIVE sample_mnt
+*/
+/*2nd precession region */
+/*
+COMPONENT guide_field_2 = Pol_FieldBox(
+    xwidth = 0.1, yheight = 0.1, zdepth = 1, Bx=0, By=0, Bz=Bguide)
+AT (0, 0, 0.021) RELATIVE sample_mnt
+  
+COMPONENT guide_field_2_end=Slit(xwidth=0.1, yheight=0.01)
+AT(0,0,1.001) RELATIVE guide_field_2
+ROTATED (0,0,0) RELATIVE Source
+*/
+/*final flipper*/
+/*
+COMPONENT pl_mon40 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.1, filename = "pol_lam40",
+  restore_neutron = 0, mx = 0, my = 0, mz = 1, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 1.001) RELATIVE guide_field_2
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT flipper3 = Pol_FieldBox(
+  xwidth=0.1,yheight=0.1,zdepth=0.02,
+  Bx=0, By=-Bflip, Bz=Bflip)
+AT( 0,0,1.001) RELATIVE guide_field_2
+ROTATED (0,0,0) RELATIVE Source
+
+COMPONENT pl_mon4 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.1, filename = "pol_lam4",
+  restore_neutron = 1, mx = 0, my = 0, mz = 1, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0.021) RELATIVE flipper3
+ROTATED (0, 0, 0) RELATIVE Source
+*/
+/*and in the end an analyzer*/
+/*
+COMPONENT analyzer_arm = Arm()
+AT (0, 0, 0.32+0.021) RELATIVE flipper3
+ROTATED (0, 0, 0) RELATIVE flipper3
+
+COMPONENT psd_ba = PSD_monitor(
+  filename = "psd_ap", xwidth = 0.1, yheight = 0.01,restore_neutron=1)
+AT (0, 0, 0) RELATIVE analyzer_arm
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT pl_mon_ba = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.01, filename = "lam_pol_ba",
+  restore_neutron = 1, mx = 1, my = 0, mz = 0, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0) RELATIVE analyzer_arm
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT analyzer = Pol_mirror(
+  rDownPar = {0.99,0.11,0.9,2,0.0185},
+  rUpPar = {0.99,0.0485,0.9,1,0.0002}, zwidth = 0.1, yheight = 0.3,
+  p_reflect = 0)
+AT (0, 0, 0) RELATIVE analyzer_arm
+ROTATED (90-POL_ANGLE,90,0) RELATIVE analyzer_arm
+EXTEND %{
+  if(!SCATTERED) ABSORB;
+%}
+
+COMPONENT detector_slit=Slit(xwidth=0.1, yheight=0.01)
+AT(0,0,0.64) RELATIVE analyzer_arm
+ROTATED (0,0,0) RELATIVE Source
+
+COMPONENT pl_mon5 = MeanPolLambda_monitor(
+  xwidth = 0.1, yheight = 0.1, filename = "pol_lam5",
+  restore_neutron = 1, mx = 0, my = 0, mz = 1, Lmin = 1,
+  Lmax = 10)
+AT (0, 0, 0.641) RELATIVE analyzer_arm
+ROTATED (0, 0, 0) RELATIVE Source
+
+COMPONENT detector = PSD_monitor(
+				 xwidth=0.1,yheight=0.1, filename="detector")
+AT (0,0,0.642) RELATIVE analyzer_arm
+ROTATED (0,0,0) RELATIVE Source
+*/
+
+/* This section is executed when the simulation ends (C code). Other    */
+/* optional sections are : SAVE                                         */
+FINALLY
+%{
+%}
+/* The END token marks the instrument definition end */
+END
+
+
+
+
+
+
