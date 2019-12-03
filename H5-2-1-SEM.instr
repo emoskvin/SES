@@ -732,7 +732,7 @@ COMPONENT Mondx = Monitor_nD(
   AT (0, 0, 0) RELATIVE PREVIOUS
 
 COMPONENT Mondy = Monitor_nD(
-    xwidth = 0.06, yheight = 0.06, options = "dy bins = 100 limits = [-5 5]", filename = "H3-5D_NSE.dy")
+    xwidth = 0.06, yheight = 0.06, options = "dy bins = 100 limits = [-3 3]", filename = "H3-5D_NSE.dy")
   AT (0, 0, 0) RELATIVE PREVIOUS
 
 COMPONENT virtual_output = Virtual_output(

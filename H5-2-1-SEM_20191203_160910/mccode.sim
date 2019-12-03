@@ -1,0 +1,11 @@
+McStas simulation description file for H3_5D.
+Date:    Tue Dec  3 16:09:10 2019
+Program: McStas 2.5 - Dec. 12, 2018
+
+begin instrument: H3_5D
+  File: /Users/EvG/Documents/OENS/TZ_PIK/GitHubSES/SES/H5-2-1-SEM_20191203_160910/mccode
+  Source: H5-2-1-SEM.instr
+  Parameters: 
+  Trace_enabled: yes
+  Default_main: yes
+  Embedded_runtime: yes
